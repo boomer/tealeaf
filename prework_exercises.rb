@@ -3,7 +3,7 @@
 # numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 # numbers.each do |number|
-# 	puts number 
+#   puts number 
 # end
 
 # #Exercise 2
@@ -11,9 +11,9 @@
 # numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 # numbers.each do | a |
-# 	if a > 5
-# 		puts a
-# 	end 
+#   if a > 5
+#     puts a
+#   end 
 # end
 
 #Exercise 3
@@ -23,9 +23,9 @@
 # arr2 =[]
 
 # arr.select do | a |
-# 	if (a %2 != 0) then
-# 		arr2.push(a)
-# 	end 
+#   if (a %2 != 0) then
+#     arr2.push(a)
+#   end 
 # end
 
 # # puts arr2
