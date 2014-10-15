@@ -6,13 +6,17 @@
 # Ask to play again. 
 # If yes, then invoke the method again.
 
+require 'pry'
+
 def calculate_winner
 
   puts "Would you like to play a game?"
   puts "Choose Rock, Paper or Scissors: (R/P/S)"
-  player = gets.chomp.upcase!
+  player = gets.chomp.downcase
 
-  computer = ['R','P','S'].sample
+  binding.pry
+
+  computer = ['r','p','s'].sample
   puts "I choose #{computer}."
 
   if player == 'r' && computer == 'r'
@@ -35,13 +39,13 @@ end
 calculate_winner
 
 puts "Play again? (Y/N)"
-replay = gets.chomp
+replay = gets.chomp.downcase
 
-if replay == 'Y'
+if replay == 'n'
   calculate_winner
 else
   puts "Thanks for playing! Maybe some other time."
-end
+end 
 
 
 
