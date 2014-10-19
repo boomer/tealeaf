@@ -12,14 +12,6 @@
 # randomly generate a pick for the computer and replace that number with an ""
 # refresh the grid with the correct value in the space
 # loop until all the places are filled - or there is a winning combination
-# 
-# create an array of arrays of winning combinations
-# handle ties
-# handle mistyped numbers
-# show winner
-# ask to play again
-# player choices
-# computer choices
 
 require 'pry'
 
