@@ -29,10 +29,7 @@ AVAILABLE_CHOICES = [1,2,3,4,5,6,7,8,9]
 WINS = [[1,2,3],[4,5,6],[7,8,9],[1,4,7],[2,5,8],[3,6,9],[1,5,9],[3,5,7]]
 POSITIONS = { 1 => " ", 2 => " ", 3 => " ", 4 => " ", 5 => " ", 6 => " ", 7 => " ", 8 => " ", 9 => " "}
 
-
-
 def render_grid
-
   #clear the screen
   puts "\e[H\e[2J"
   #show the grid
@@ -47,14 +44,32 @@ def render_grid
   puts "     |     |     "
   puts "  #{POSITIONS.fetch(7)}  |  #{POSITIONS.fetch(8)}  |  #{POSITIONS.fetch(9)}  "
   puts "     |     |     "
-  puts "                 "
-  puts "Choose a posiiton (from 1-9) to place a piece:"
+end
 
+def play_game
+  render_grid
+  puts "                 "
+  puts "Choose a position (from 1-9) to place a piece:"
   p = gets.chomp.to_i
-  PLAYER_CHOICES.push(p)
-  AVAILABLE_CHOICES.delete(p)
-  POSITIONS.update({ p => "X"})  
-  #swap space for p in grid
+
+  if AVAILABLE_CHOICES.include?(p)
+
+    PLAYER_CHOICES.push(p)
+    AVAILABLE_CHOICES.delete(p)
+    POSITIONS.update({ p => "X"})  
+    render_grid
+
+  else
+
+    puts "                 "
+    puts "That position is taken. Choose a different position (from 1-9) to place a piece:"
+    p = gets.chomp.to_i 
+    PLAYER_CHOICES.push(p)
+    AVAILABLE_CHOICES.delete(p)
+    POSITIONS.update({ p => "X"})  
+    render_grid
+
+  end
   
   sleep (1)
 
@@ -62,21 +77,19 @@ def render_grid
   COMPUTER_CHOICES.push(c)
   AVAILABLE_CHOICES.delete(c)
   POSITIONS.update({ c => "O"}) 
-  #swap space for c in grid
-
-  binding.pry
+  render_grid
 
   #what happens if computer chooses a spot that's already been taken
-
 end
 
-def update_grid
-
-# update display value in 
-
-# show error if player picks a number that has already been chosen
-
-
+until AVAILABLE_CHOICES.nil?
+  play_game
+  binding.pry
+  if WINS.include?(PLAYER_CHOICES.sort)
+     puts "YOU WIN!!" 
+  elsif WINS.include?(COMPUTER_CHOICES.sort)
+     puts "YOU LOSE!!" 
+  else
+     puts "It's a tie!"
+  end
 end
-
-render_grid
