@@ -35,15 +35,15 @@ def create_deck
 end
 
 def show_table(deck, player, player_hand, player_total, dealer_hand, dealer_total)
-  binding.pry
   puts "\e[H\e[2J"
   puts "* * * * * * * * * * * * * * * * * BLACKJACK * * * * * * * * * * * * * * * * *"
   puts "*                         *                       *                         *"
   puts "*#{player.upcase.center(24)} *                       *         DEALER          *"
   puts "*                         *                       *                         *"
-  puts "*#{player_hand.to_s.center(24)} *           *#{dealer_hand.to_s.center(24)} *"
+  puts "*#{player_hand.to_s.center(24)} *                       *#{dealer_hand.to_s.center(24)} *"
   puts "*                         *                       *                         *"
-  puts "*#{player_total.to_s.center(24)} *           *#{dealer_total.to_s.center(24deal)} *"
+  binding.pry
+  puts "*#{player_total.to_s.center(24)} *                       *#{dealer_total.to_s.center(24)} *"
   puts "*                         *                       *                         *"
   puts "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *"
   puts ""
@@ -96,14 +96,6 @@ def deal_cards(deck, player, player_hand, player_total, dealer_hand, dealer_tota
   #  puts "DEALER WINS"
 end
 
-# def player_hand(deck)
-#   player_hand = []
-# end
-
-# def dealer_hand(deck)
-#   dealer_hand = []
-# end
-
 def update_player_total(player_hand, player_total)
   temp_array = []
   player_hand.each do |hand|
@@ -118,7 +110,6 @@ def update_dealer_total(dealer_hand, dealer_total)
   dealer_hand.each do |hand|
     temp_array << hand.values
   end
-  # http://viarails.net/q/How-to-sum-an-array-of-numbers-in-Ruby
   dealer_total = (dealer_total + temp_array.flatten.inject(0) {|sum, i|  sum + i })
 end
 
