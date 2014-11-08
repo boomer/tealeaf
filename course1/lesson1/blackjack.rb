@@ -15,6 +15,7 @@
 # If player stays, then dealer must hit.
 # Check dealer hand.
 #  blackjack if 21, bust if more than 21, takes another card if less than 21
+# Should only show the value of the dealers first card, then "x" for every card after that.
 
 require 'pry'
 
@@ -34,15 +35,15 @@ def create_deck
     {"AH" => 1}, {"AC" => 1}, {"AS" => 1}, {"AD" => 1}]
 end
 
-def show_table(deck, player, player_hand, player_total, dealer_hand, dealer_total)
+def show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)
   puts "\e[H\e[2J"
   puts "* * * * * * * * * * * * * * * * * BLACKJACK * * * * * * * * * * * * * * * * *"
   puts "*                         *                       *                         *"
-  puts "*#{player.upcase.center(24)} *                       *         DEALER          *"
-  puts "*                         *                       *                         *"
-  puts "*#{player_hand.to_s.center(24)} *                       *#{dealer_hand.to_s.center(24)} *"
+  puts "*#{player_name.upcase.center(24)} *                       *         DEALER          *"
   puts "*                         *                       *                         *"
   binding.pry
+  puts "*#{player_cards.join(", ").center(24)} *#{prompt.to_s.center(23)}*#{dealer_cards.join(", ").center(24)} *"
+  puts "*                         *                       *                         *"
   puts "*#{player_total.to_s.center(24)} *                       *#{dealer_total.to_s.center(24)} *"
   puts "*                         *                       *                         *"
   puts "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *"
@@ -52,75 +53,91 @@ end
 
 def get_player_name
   puts "Welcome to Blackjack. What's your name?"
-  player = gets.chomp
+  player_name = gets.chomp
 end
 
-def deal_cards(deck, player, player_hand, player_total, dealer_hand, dealer_total)
-  if player_hand.empty? && dealer_hand.empty?
-      card = deck.sample
-      player_hand << card
-      deck.delete(card)
-      card = deck.sample
-      player_hand << card
-      deck.delete(card)
-      player_total = update_player_total(player_hand,player_total)
-      card = deck.sample
-      dealer_hand << card
-      deck.delete(card)
-      card = deck.sample
-      dealer_hand << card
-      deck.delete(card)
-      dealer_total = update_dealer_total(dealer_hand,dealer_total)
-  end
-
-  # puts "HIT OR STAY?" 
-  # hit_or_stay = gets.chomp.upcase
-  #   if hit_or_stay == "HIT"
-  #     card = deck.keys.sample
-  #     player_hand.push(card)
-  #     deck.delete(:card)
-  #   elsif hit_or_stay == "STAY"
-  #     dealer_hand = deck.keys.sample
-  #   else
-  #     nil
-  #   end
-  # sample two cards from the deck for the player 
-  #    add it to the player hand
-  #   remove the two cards
-  # sample two cards from the deck for the dealer
-  #   remove the two cards
-  #  puts "HIT AGAIN OR STAY?"
-  #  puts "DEALER HITS"
-  #  puts "DEALER HITS AGAIN"
-  #  puts "#{player.upcase} WINS"
-  #  puts "DEALER WINS"
+def say(msg)
+  puts msg
+  sleep(0.25)
+  puts "." 
+  sleep(0.25)
+  puts "."
+  sleep(0.25)
+  puts "."
+  sleep(0.25)
 end
 
-def update_player_total(player_hand, player_total)
+def deal_first_cards(deck, player_hand, dealer_hand)
+  card = deck.sample
+  player_hand << card
+  deck.delete(card)
+  card = deck.sample
+  player_hand << card
+  deck.delete(card)
+  card = deck.sample
+  dealer_hand << card
+  deck.delete(card)
+  card = deck.sample
+  dealer_hand << card
+  deck.delete(card)
+end
+
+def update_total(hand,total)
   temp_array = []
-  player_hand.each do |hand|
+  hand.each do |hand|
     temp_array << hand.values
   end
-  # http://viarails.net/q/How-to-sum-an-array-of-numbers-in-Ruby
-  player_total = (player_total + temp_array.flatten.inject(0) {|sum, i|  sum + i })
+  total = temp_array.flatten.inject(0) {|sum, i|  sum + i }
 end
 
-def update_dealer_total(dealer_hand, dealer_total)
+def update_cards(hand)
   temp_array = []
-  dealer_hand.each do |hand|
-    temp_array << hand.values
+  hand.each do |hand|
+    temp_array << hand.keys
   end
-  dealer_total = (dealer_total + temp_array.flatten.inject(0) {|sum, i|  sum + i })
+  hand = temp_array.flatten
+end
+
+def get_player_choice(player_choice, player_total, dealer_total, prompt)
+  # if player_choice == " " 
+    prompt = "Hit or stay?"
+  #   player_choice = gets.chomp  
+  # elsif player_choice == "Stay"
+  #   prompt = "Dealer hits."
+  # end
+end
+
+def calculate_win(player_total, dealer_total, prompt)
+  # case player_total, dealer_total
+  #   when player_total == 21
+  # case player_total, dealer_total
+  #   when dealer_total == 21 
+  # return nil
 end
 
 deck = create_deck
-player = get_player_name
 player_hand = []
 dealer_hand = []
+player_cards = []
+dealer_cards = []
 player_total = 0
 dealer_total = 0
-show_table(deck, player, player_hand, player_total, dealer_hand, dealer_total)
-deal_cards(deck, player, player_hand, player_total, dealer_hand, dealer_total)
-show_table(deck, player, player_hand, player_total, dealer_hand, dealer_total)
+player_choice = " "
+prompt = " "
+player_name = get_player_name
+say("Hi #{player_name}. Dealing your first two cards.")
+deal_first_cards(deck, player_hand, dealer_hand)
+
+begin 
+  player_total = update_total(player_hand,player_total)
+  dealer_total = update_total(dealer_hand,dealer_total)
+  player_cards = update_cards(player_hand)
+  dealer_cards = update_cards(dealer_hand)
+  get_player_choice(player_choice, player_total, dealer_total, prompt)
+  binding.pry
+  show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)
+  binding.pry
+  win_or_bust = calculate_win(player_total, dealer_total, prompt)
+end until win_or_bust 
 
 
