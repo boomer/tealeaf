@@ -41,7 +41,7 @@ def show_table(deck, player_name, player_hand, player_total, player_cards, deale
   puts "*                         *                       *                         *"
   puts "*#{player_name.upcase.center(24)} *                       *         DEALER          *"
   puts "*                         *                       *                         *"
-  binding.pry
+  # binding.pry
   puts "*#{player_cards.join(", ").center(24)} *#{prompt.to_s.center(23)}*#{dealer_cards.join(", ").center(24)} *"
   puts "*                         *                       *                         *"
   puts "*#{player_total.to_s.center(24)} *                       *#{dealer_total.to_s.center(24)} *"
@@ -99,11 +99,13 @@ def update_cards(hand)
 end
 
 def get_player_choice(player_choice, player_total, dealer_total, prompt)
-  # if player_choice == " " 
-    prompt = "Hit or stay?"
-  #   player_choice = gets.chomp  
-  # elsif player_choice == "Stay"
-  #   prompt = "Dealer hits."
+  return player_choice = "Hit"
+  # case 
+  # when player_choice == " " 
+  #   player_choice = gets.chomp
+  #   binding.pry
+  # # elsif player_choice == "Stay"
+  # #   prompt = "Dealer hits."
   # end
 end
 
@@ -123,7 +125,7 @@ dealer_cards = []
 player_total = 0
 dealer_total = 0
 player_choice = " "
-prompt = " "
+prompt = "Hit or stay?"
 player_name = get_player_name
 say("Hi #{player_name}. Dealing your first two cards.")
 deal_first_cards(deck, player_hand, dealer_hand)
@@ -132,10 +134,9 @@ begin
   player_total = update_total(player_hand,player_total)
   dealer_total = update_total(dealer_hand,dealer_total)
   player_cards = update_cards(player_hand)
-  dealer_cards = update_cards(dealer_hand)
-  get_player_choice(player_choice, player_total, dealer_total, prompt)
-  binding.pry
+  dealer_cards = update_cards(dealer_hand)  
   show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)
+  get_player_choice(player_choice, player_total, dealer_total, prompt)
   binding.pry
   win_or_bust = calculate_win(player_total, dealer_total, prompt)
 end until win_or_bust 
