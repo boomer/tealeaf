@@ -41,14 +41,13 @@ def show_table(deck, player_name, player_hand, player_total, player_cards, deale
   puts "*                         *                       *                         *"
   puts "*#{player_name.upcase.center(24)} *                       *         DEALER          *"
   puts "*                         *                       *                         *"
-  # binding.pry
   puts "*#{player_cards.join(", ").center(24)} *#{prompt.to_s.center(23)}*#{dealer_cards.join(", ").center(24)} *"
   puts "*                         *                       *                         *"
   puts "*#{player_total.to_s.center(24)} *                       *#{dealer_total.to_s.center(24)} *"
   puts "*                         *                       *                         *"
   puts "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *"
   puts ""
-  puts ""
+  puts ">> #{prompt.to_s}"
 end
 
 def get_player_name
@@ -59,62 +58,74 @@ end
 def say(msg)
   puts msg
   sleep(0.25)
-  puts "." 
-  sleep(0.25)
-  puts "."
-  sleep(0.25)
-  puts "."
-  sleep(0.25)
+  3.times do 
+    puts "." 
+    sleep(0.25)
+  end
 end
 
 def deal_first_cards(deck, player_hand, dealer_hand)
-  card = deck.sample
-  player_hand << card
-  deck.delete(card)
-  card = deck.sample
-  player_hand << card
-  deck.delete(card)
-  card = deck.sample
-  dealer_hand << card
-  deck.delete(card)
-  card = deck.sample
-  dealer_hand << card
-  deck.delete(card)
-end
-
-def update_total(hand,total)
-  temp_array = []
-  hand.each do |hand|
-    temp_array << hand.values
+  2.times do
+    card = deck.sample
+    player_hand << card
+    deck.delete(card)
+    card = deck.sample
+    dealer_hand << card
+    deck.delete(card)
   end
-  total = temp_array.flatten.inject(0) {|sum, i|  sum + i }
 end
 
-def update_cards(hand)
+def deal_cards(deck, hand)
+  card = deck.sample
+  hand << card
+  deck.delete(card)
+end
+
+def update_cards(cards)
   temp_array = []
-  hand.each do |hand|
-    temp_array << hand.keys
+  cards.each do |cards|
+    temp_array << cards.keys
   end
-  hand = temp_array.flatten
+  cards = temp_array.flatten
 end
 
-def get_player_choice(player_choice, player_total, dealer_total, prompt)
-  return player_choice = "Hit"
-  # case 
-  # when player_choice == " " 
-  #   player_choice = gets.chomp
-  #   binding.pry
-  # # elsif player_choice == "Stay"
-  # #   prompt = "Dealer hits."
-  # end
+def update_total(cards)
+  temp_array = []
+  cards.each do |cards|
+    temp_array << cards.values
+    temp_array.flatten!
+  end
+  if temp_array.include?(1)
+    temp_array.delete(1)
+    total = temp_array.inject(0) {|sum, i|  sum + i }
+    if total < 10
+      total = total + 1
+    else
+      total = total + 11
+    end
+    else total = temp_array.inject(0) {|sum, i|  sum + i }      
+  end
 end
 
-def calculate_win(player_total, dealer_total, prompt)
-  # case player_total, dealer_total
-  #   when player_total == 21
-  # case player_total, dealer_total
-  #   when dealer_total == 21 
-  # return nil
+def get_player_choice
+  player_choice = gets.chomp.upcase
+  # add error checking for user input
+end
+
+def calculate_win(player_name, player_total, dealer_total)
+  if player_total > 21
+    return "#{player_name.upcase} busts!"
+  elsif dealer_total > 21
+    return "Dealer busts!"
+  elsif player_total == 21
+    return "#{player_name.upcase} gets Blackjack!"
+  elsif dealer_total == 21
+    return "Dealer gets Blackjack!"
+  elsif (player_total == 21) & (dealer_total == 21)
+    return "It's a tie. House returns bets."
+  else return nil
+  end   
+  binding.pry
 end
 
 deck = create_deck
@@ -128,17 +139,29 @@ player_choice = " "
 prompt = "Hit or stay?"
 player_name = get_player_name
 say("Hi #{player_name}. Dealing your first two cards.")
-deal_first_cards(deck, player_hand, dealer_hand)
 
 begin 
-  player_total = update_total(player_hand,player_total)
-  dealer_total = update_total(dealer_hand,dealer_total)
+  deal_first_cards(deck, player_hand, dealer_hand) if player_hand.empty?
+  player_total = update_total(player_hand)
+  dealer_total = update_total(dealer_hand)
   player_cards = update_cards(player_hand)
-  dealer_cards = update_cards(dealer_hand)  
-  show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)
-  get_player_choice(player_choice, player_total, dealer_total, prompt)
+  dealer_cards = update_cards(dealer_hand) 
+  show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)  
+  win_or_bust = calculate_win(player_name, player_total, dealer_total)
+  player_choice = get_player_choice
+  case
+  when player_choice == "HIT"
+    deal_cards(deck, player_hand)
+    prompt = "Hit or stay?"
+  when player_choice == "STAY"
+    # add logic to continue dealing until dealer total is 17, greater than the player_total or busts.
+    deal_cards(deck, dealer_hand)
+    prompt = "Dealer hits."
+  end  
   binding.pry
-  win_or_bust = calculate_win(player_total, dealer_total, prompt)
 end until win_or_bust 
 
+puts win_or_bust
+# puts "Would you like to play another hand?"
+# replay = gets.chomp
 
