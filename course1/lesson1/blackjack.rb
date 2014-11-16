@@ -1,21 +1,6 @@
 # blackjack.rb
 # Michael Boomershine
-# Edited 10/30/14
-
-# Create the deck - 4 suits, 2-10, J, Q, K, A and values (Ace can be 1 or 11)
-#   like deck = { "2H" => [2, "2 of Hearts"], "2C" => [2, "2 of Clubs"], "AS" => [1, "Ace of Spades"] }
-#   or like deck = { "2H" => 2, "2C" => 2, "AS" => 1 }
-# Ask the players name
-# Show the table with two hands - player and dealer
-# Shuffling the deck...
-# Deal the first two cards (remove cards from deck)
-# Player chooses hit or stay
-# Check player hand for win or loss
-#  blackjack if 21, bust if more than 21, player chooses if less than 21  
-# If player stays, then dealer must hit.
-# Check dealer hand.
-#  blackjack if 21, bust if more than 21, takes another card if less than 21
-# Should only show the value of the dealers first card, then "x" for every card after that.
+# Edited 11/16/14    
 
 require 'pry'
 
@@ -112,20 +97,24 @@ def get_player_choice
   # add error checking for user input
 end
 
-def calculate_win(player_name, player_total, dealer_total)
-  if player_total > 21
-    return "#{player_name.upcase} busts!"
+def calculate_win(player_name, player_choice, player_total, dealer_total)
+  binding.pry
+  if (player_total == 21) & (dealer_total == 21)
+    return "Standoff."
   elsif dealer_total > 21
     return "Dealer busts!"
   elsif player_total == 21
     return "#{player_name.upcase} gets Blackjack!"
   elsif dealer_total == 21
     return "Dealer gets Blackjack!"
-  elsif (player_total == 21) & (dealer_total == 21)
-    return "It's a tie. House returns bets."
-  else return nil
+  elsif player_total > 21
+    return "#{player_name.upcase} busts!"
+  elsif (player_choice == "STAY") & (player_total < dealer_total)
+    return "You deserve to lose."
+  else 
+    return nil
   end   
-  binding.pry
+  # binding.pry
 end
 
 deck = create_deck
@@ -141,27 +130,40 @@ player_name = get_player_name
 say("Hi #{player_name}. Dealing your first two cards.")
 
 begin 
-  deal_first_cards(deck, player_hand, dealer_hand) if player_hand.empty?
+  # binding.pry
+  if player_hand.empty?
+    deal_first_cards(deck, player_hand, dealer_hand)
+  elsif (player_choice == "STAY") & (dealer_total < 17)
+    deal_cards(deck, dealer_hand)
+    prompt = "Dealer hits again."
+    sleep(0.25)
+    3.times do 
+      puts "." 
+      sleep(0.25)
+    end
+  else
+    player_choice = get_player_choice
+    case
+      when player_choice == "HIT"
+        deal_cards(deck, player_hand)
+        prompt = "Hit or stay?"
+      when player_choice == "STAY"
+        deal_cards(deck, dealer_hand)
+        prompt = "Dealer hits."
+    end
+  end
+  # binding.pry
   player_total = update_total(player_hand)
   dealer_total = update_total(dealer_hand)
   player_cards = update_cards(player_hand)
   dealer_cards = update_cards(dealer_hand) 
   show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)  
-  win_or_bust = calculate_win(player_name, player_total, dealer_total)
-  player_choice = get_player_choice
-  case
-  when player_choice == "HIT"
-    deal_cards(deck, player_hand)
-    prompt = "Hit or stay?"
-  when player_choice == "STAY"
-    # add logic to continue dealing until dealer total is 17, greater than the player_total or busts.
-    deal_cards(deck, dealer_hand)
-    prompt = "Dealer hits."
-  end  
-  binding.pry
+  # binding.pry
+  win_or_bust = calculate_win(player_name, player_choice, player_total, dealer_total)
 end until win_or_bust 
 
-puts win_or_bust
+prompt = win_or_bust
+show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)  
 # puts "Would you like to play another hand?"
 # replay = gets.chomp
 
