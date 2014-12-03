@@ -98,7 +98,7 @@ def get_player_choice
 end
 
 def calculate_win(player_name, player_choice, player_total, dealer_total)
-  binding.pry
+  # binding.pry
   if (player_total == 21) & (dealer_total == 21)
     return "Standoff."
   elsif dealer_total > 21
@@ -114,23 +114,15 @@ def calculate_win(player_name, player_choice, player_total, dealer_total)
   else 
     return nil
   end   
-  # binding.pry
 end
 
 deck = create_deck
-player_hand = []
-dealer_hand = []
-player_cards = []
-dealer_cards = []
-player_total = 0
-dealer_total = 0
-player_choice = " "
+player_hand, dealer_hand, player_cards, dealer_cards, player_total, dealer_total, player_choice = [], [], [], [], 0, 0, " "
 prompt = "Hit or stay?"
 player_name = get_player_name
 say("Hi #{player_name}. Dealing your first two cards.")
 
 begin 
-  # binding.pry
   if player_hand.empty?
     deal_first_cards(deck, player_hand, dealer_hand)
   elsif (player_choice == "STAY") & (dealer_total < 17)
@@ -152,18 +144,15 @@ begin
         prompt = "Dealer hits."
     end
   end
-  # binding.pry
-  player_total = update_total(player_hand)
-  dealer_total = update_total(dealer_hand)
-  player_cards = update_cards(player_hand)
-  dealer_cards = update_cards(dealer_hand) 
+  player_total, dealer_total = update_total(player_hand), update_total(dealer_hand)
+  player_cards, dealer_cards = update_cards(player_hand), update_cards(dealer_hand)
   show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)  
-  # binding.pry
   win_or_bust = calculate_win(player_name, player_choice, player_total, dealer_total)
 end until win_or_bust 
 
 prompt = win_or_bust
 show_table(deck, player_name, player_hand, player_total, player_cards, dealer_hand, dealer_total, dealer_cards, prompt)  
-# puts "Would you like to play another hand?"
+
+# puts "Would you like to play another hand (Y/N)?"
 # replay = gets.chomp
 
