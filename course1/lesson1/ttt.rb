@@ -20,9 +20,11 @@ def create_positions
   p = {}
   (1..9).each {|position| p[position] = ' '}
   p
+  binding.pry
 end
 
 def render_grid(n)
+  binding.pry
   puts "\e[H\e[2J"
   puts "     |     |     "
   puts "  #{n[1]}  |  #{n[2]}  |  #{n[3]}  "
