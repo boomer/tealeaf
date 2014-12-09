@@ -22,39 +22,83 @@ require 'pry'
 
 class Hand
 
-  def initialize
-    # deal two cards
-  end
-
-  def update_hand
+  def update_cards(cards)
+    temp_array = []
+    cards.each do |cards|
+      temp_array << cards.keys
+    end
+    cards = temp_array.flatten
   end
   
-  def calculate_value
+  def calculate_value(cards)
+    temp_array = []
+    cards.each do |cards|
+      temp_array << cards.values
+      temp_array.flatten!
+    end
+    if temp_array.include?(1)
+      temp_array.delete(1)
+      total = temp_array.inject(0) {|sum, i|  sum + i }
+      if total < 10
+        total = total + 1
+      else
+        total = total + 11
+      end
+      else total = temp_array.inject(0) {|sum, i|  sum + i }      
+    end
   end
-
 end
 
-class PlayerHand < Hand
-  @playerhand = []
-end
+# class PlayerHand < Hand
+#   attr_accessor :player_hand, :player_cards, :player_total
+
+#   def initialize
+#     @player_hand = player_hand
+#     @player_cards = player_cards
+#     @player_total = player_total
+#   end
+
+#   player_hand = []
+#   player_cards = update_cards(player_hand)
+#   player_total = calculate_value(player_hand)
+
+# end
 
 class DealerHand < Hand
-  @playerhand = []
+  attr_accessor :dealer_hand, :dealer_cards, :dealer_total
+
+  def initialize
+    @dealer_hand = dealer_hand
+    @dealer_cards = dealer_cards
+    @dealer_total = dealer_total
+  end
+
+  binding.pry
+  dealer_hand = []
+  dealer_cards = []
+
+  binding.pry
+  dealer_cards = update_cards(dealer_hand)
+
+  binding.pry
+  dealer_total = calculate_value(dealer_cards)
+
+  binding.pry
+
 end
 
 class Player
+  attr_accessor :player_name
 
   def initialize
+    @player_name = player_name
+    puts "Welcome to Blackjack. What's your name?"
+    player_name = gets.chomp
   end
 
   def hit_or_stay
-  end
-
-end
-
-class Dealer
-
-  def initialize
+    puts "Hit or stay?"
+    player_choice = gets.chomp.upcase
   end
 
   def hit
@@ -62,16 +106,42 @@ class Dealer
 
 end
 
+class Dealer
+
+  def hit
+    deal_card(deck, dealer_hand)
+    prompt = "Dealer hits again."
+    sleep(0.25)
+    3.times do 
+      puts "." 
+      sleep(0.25)
+    end
+  end
+
+end
+
 class Game
-  attr_reader :deck
+  attr_accessor :deck, :player_hand, :dealer_hand, :player_choice, :player, :dealer
 
   def initialize
     @deck = Deck.new
+    @player = Player.new
+    @dealer = Dealer.new
+    @player_hand = PlayerHand.new
+    @dealer_hand = DealerHand.new
   end
 
   def play
-    deck.deal_first_hand
-    binding.pry
+    begin
+      binding.pry
+      if player_hand == nil
+        deck.deal_first_hand(@player_hand, @dealer_hand)
+        binding.pry
+      elsif (player_choice == "STAY") & (dealer_total < 17)
+        dealer.hit
+      else player_choice = @player.hit_or_stay
+      end
+    end until win_or_bust
   end
 
   def say
@@ -86,7 +156,7 @@ class Game
 end
 
 class Deck
-  attr_reader :deck, :playerhand, :dealerhand
+  attr_accessor :deck, :player_hand, :dealer_hand
 
   def initialize
     @deck = [{"2H" => 2}, {"2C" => 2}, {"2S" => 2}, {"2D" => 2},
@@ -104,19 +174,19 @@ class Deck
     {"AH" => 1}, {"AC" => 1}, {"AS" => 1}, {"AD" => 1}]
   end
 
-  def deal_first_hand
+  def deal_first_hand(player_hand, dealer_hand)
     2.times do
       card = deck.sample
-      playerhand << card
+      player_hand << card
       deck.delete(card)
       card = deck.sample
-      dealerhand << card
+      dealer_hand << card
       deck.delete(card)
-      binding.pry
     end
+    binding.pry
   end
 
-  def deal
+  def deal_card
     card = deck.sample
     hand << card
     deck.delete(card)
