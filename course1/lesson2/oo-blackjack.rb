@@ -21,30 +21,36 @@
 require 'pry'
 
 class Hand
+  attr_accessor :player_hand, :player_cards, :player_total, :dealer_hand, :dealer_cards, :dealer_total
 
-  def update_cards(cards)
-    temp_array = []
-    cards.each do |cards|
-      temp_array << cards.keys
+  def self.update_cards(hand)
+    unless hand == nil 
+      temp_array = []
+      binding.pry
+      hand.each do |card|
+        temp_array << card.keys
+      end
+      hand = temp_array.flatten
     end
-    cards = temp_array.flatten
   end
   
-  def calculate_value(cards)
-    temp_array = []
-    cards.each do |cards|
-      temp_array << cards.values
-      temp_array.flatten!
-    end
-    if temp_array.include?(1)
-      temp_array.delete(1)
-      total = temp_array.inject(0) {|sum, i|  sum + i }
-      if total < 10
-        total = total + 1
-      else
-        total = total + 11
+  def self.calculate_value(hand)
+    unless hand == nil
+      temp_array = []
+      hand.each do |card|
+        temp_array << card.values
+        temp_array.flatten!
       end
-      else total = temp_array.inject(0) {|sum, i|  sum + i }      
+      if temp_array.include?(1)
+        temp_array.delete(1)
+        total = temp_array.inject(0) {|sum, i|  sum + i }
+        if total < 10
+          total = total + 1
+        else
+          total = total + 11
+        end
+        else total = temp_array.inject(0) {|sum, i|  sum + i }      
+      end
     end
   end
 end
@@ -52,48 +58,55 @@ end
 # class PlayerHand < Hand
 #   attr_accessor :player_hand, :player_cards, :player_total
 
-#   def initialize
-#     @player_hand = player_hand
-#     @player_cards = player_cards
-#     @player_total = player_total
-#   end
+#   @player_hand = []
 
-#   player_hand = []
-#   player_cards = update_cards(player_hand)
-#   player_total = calculate_value(player_hand)
+#   # def initialize
+#     #@player_hand = player_hand
+#     # @player_cards = player_cards
+#     # @player_total = player_total
+#     # @player_hand = []
+#     # # player_cards = []
+#     # # player_total = 0
+#   # end
+
+#   # player_cards = update_cards(@player_hand)
+#   # player_total = calculate_value(@player_hand)
 
 # end
 
-class DealerHand < Hand
-  attr_accessor :dealer_hand, :dealer_cards, :dealer_total
+# class DealerHand < Hand
+#   attr_accessor :dealer_hand, :dealer_cards, :dealer_total
 
-  def initialize
-    @dealer_hand = dealer_hand
-    @dealer_cards = dealer_cards
-    @dealer_total = dealer_total
-  end
+#   # def initialize
+#     # @dealer_hand = dealer_hand
+#     # @dealer_cards = dealer_cards
+#     # @dealer_total = dealer_total
+#     # dealer_hand = []
+#     # dealer_cards = []
+#     # dealer_total = 0
+#   # end
 
-  binding.pry
-  dealer_hand = []
-  dealer_cards = []
+#  # binding.pry
+#  #  dealer_cards = update_cards(@dealer_hand)
 
-  binding.pry
-  dealer_cards = update_cards(dealer_hand)
+#  # binding.pry
+#  #  dealer_total = calculate_value(@dealer_hand)
 
-  binding.pry
-  dealer_total = calculate_value(dealer_cards)
+#  # binding.pry
 
-  binding.pry
-
-end
+# end
 
 class Player
-  attr_accessor :player_name
+  attr_accessor :player_name, :player_hand
 
   def initialize
-    @player_name = player_name
     puts "Welcome to Blackjack. What's your name?"
     player_name = gets.chomp
+    @player_name = player_name
+    player_hand = []    
+    @player_hand = player_hand
+    player_choice = ' '
+    @player_choice = player_choice
   end
 
   def hit_or_stay
@@ -101,12 +114,16 @@ class Player
     player_choice = gets.chomp.upcase
   end
 
-  def hit
-  end
-
 end
 
 class Dealer
+
+  attr_accessor :dealer_hand
+
+    def initialize
+    dealer_hand = []
+    @dealer_hand = dealer_hand
+  end
 
   def hit
     deal_card(deck, dealer_hand)
@@ -121,25 +138,23 @@ class Dealer
 end
 
 class Game
-  attr_accessor :deck, :player_hand, :dealer_hand, :player_choice, :player, :dealer
+  attr_accessor :deck, :player, :dealere
 
   def initialize
     @deck = Deck.new
     @player = Player.new
     @dealer = Dealer.new
-    @player_hand = PlayerHand.new
-    @dealer_hand = DealerHand.new
   end
 
   def play
     begin
       binding.pry
-      if player_hand == nil
-        deck.deal_first_hand(@player_hand, @dealer_hand)
+      if player.player_hand == []
+        deck.deal_first_hand(player.player_hand, dealer.dealer_hand)
         binding.pry
-      elsif (player_choice == "STAY") & (dealer_total < 17)
+      elsif (player_choice == "STAY") & (@dealer_total < 17)
         dealer.hit
-      else player_choice = @player.hit_or_stay
+      else player_choice = player.hit_or_stay
       end
     end until win_or_bust
   end
@@ -183,7 +198,6 @@ class Deck
       dealer_hand << card
       deck.delete(card)
     end
-    binding.pry
   end
 
   def deal_card
@@ -195,3 +209,4 @@ class Deck
 end
 
 Game.new.play
+
