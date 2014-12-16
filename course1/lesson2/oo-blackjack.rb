@@ -74,10 +74,9 @@ class Dealer
 end
 
 class Game
-  attr_accessor :deck, :player, :dealer, :player_hand, :dealer_hand, :player_total, :dealer_total, :prompt
+  attr_accessor :cards, :player, :dealer, :player_hand, :dealer_hand, :player_total, :dealer_total, :prompt
 
   def initialize
-    @deck = Deck.new
     @player = Player.new
     @dealer = Dealer.new
   end
@@ -86,7 +85,7 @@ class Game
     begin
       binding.pry
       if player.player_hand == []
-        deck.deal_first_hand(player.player_hand, dealer.dealer_hand)
+        cards.deal_first_hand(player.player_hand, dealer.dealer_hand)
       elsif (player.player_choice == "STAY") & (dealer.dealer_total < 17)
         dealer.hit
       else 
@@ -143,10 +142,10 @@ class Game
 end
 
 class Deck
-  attr_accessor :deck, :player_hand, :dealer_hand, :player_total, :dealer_total
+  attr_accessor :cards, :player_hand, :dealer_hand, :player_total, :dealer_total
 
   def initialize
-    @deck = [{"2H" => 2}, {"2C" => 2}, {"2S" => 2}, {"2D" => 2},
+    @cards = [{"2H" => 2}, {"2C" => 2}, {"2S" => 2}, {"2D" => 2},
     {"3H" => 3}, {"3C" => 3}, {"3S" => 3}, {"3D" => 3},
     {"4H" => 4}, {"4C" => 4}, {"4S" => 4}, {"4D" => 4},
     {"5H" => 5}, {"5C" => 5}, {"5S" => 5}, {"5D" => 5},
@@ -163,19 +162,19 @@ class Deck
 
   def deal_first_hand(player_hand, dealer_hand)
     2.times do
-      card = deck.sample
+      card = cards.sample
       player_hand << card
-      deck.delete(card)
-      card = deck.sample
+      cards.delete(card)
+      card = cards.sample
       dealer_hand << card
-      deck.delete(card)
+      cards.delete(card)
     end
   end
 
   def deal_card(deck,hand)
-    card = deck.sample
+    card = cards.sample
     hand << card
-    deck.delete(card)
+    cards.delete(card)
   end
 
   def update_cards(hand)
