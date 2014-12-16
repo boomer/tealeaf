@@ -97,11 +97,17 @@ end
 class Player
   include Hand
 
-  attr_accessor :name, :cards
+  attr_accessor :name, :cards, :choice
 
   def initialize(n)
     @name = n
     @cards = []
+    @choice = ' '
+  end
+
+  def hit_or_stay        
+    puts "Do you want to hit (H) or stay (S)?"
+    choice = gets.chomp.upcase
   end
 
 end
@@ -123,7 +129,6 @@ class Game
 
   def initialize
     deck = Deck.new
-    choice = ' '
     player = Player.new("Michael")
     2.times do
       player.add_card(deck.deal_one)
@@ -138,11 +143,10 @@ class Game
   def play
     begin
       binding.pry
-      if (choice == 'S') & (dealer.total < 17)
+      if (player.choice == 'S') & (dealer.total < 17)
         dealer.add_card(deck.deal_one)
       else
-        puts "Do you want to hit (H) or stay (S)?"
-        choice = gets.chomp.upcase
+        player.hit_or_stay
       end
       player.show_hand
       dealer.show_hand
@@ -172,8 +176,6 @@ class Game
   end
 end
 
-Game.new
-Game.play
-
-
+game = Game.new
+game.play
 
