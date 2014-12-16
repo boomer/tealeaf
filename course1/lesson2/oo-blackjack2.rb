@@ -121,17 +121,36 @@ class Game
 
   attr_accessor :deck
 
-  deck = Deck.new
-  choice = ' '
-  player = Player.new("Michael")
-  2.times do
-    player.add_card(deck.deal_one)
+  def initialize
+    deck = Deck.new
+    choice = ' '
+    player = Player.new("Michael")
+    2.times do
+      player.add_card(deck.deal_one)
+    end
+
+    dealer = Dealer.new
+    2.times do
+      dealer.add_card(deck.deal_one)
+    end
   end
 
-  dealer = Dealer.new
-  2.times do
-    dealer.add_card(deck.deal_one)
+  def play
+    begin
+      binding.pry
+      if (choice == 'S') & (dealer.total < 17)
+        dealer.add_card(deck.deal_one)
+      else
+        puts "Do you want to hit (H) or stay (S)?"
+        choice = gets.chomp.upcase
+      end
+      player.show_hand
+      dealer.show_hand
+      binding.pry
+      win_or_bust = self.check_for_winner
+    end until win_or_bust
   end
+
 
   def check_for_winner
     binding.pry
@@ -151,22 +170,10 @@ class Game
       return nil
     end   
   end
-
-  begin
-    binding.pry
-    if (choice == 'S') & (dealer.total < 17)
-      dealer.add_card(deck.deal_one)
-    else
-      puts "Do you want to hit (H) or stay (S)?"
-      choice = gets.chomp.upcase
-    end
-    player.show_hand
-    dealer.show_hand
-    win_or_bust = check_for_winner
-  end until win_or_bust
 end
 
 Game.new
+Game.play
 
 
 
